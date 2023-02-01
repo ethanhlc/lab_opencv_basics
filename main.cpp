@@ -7,6 +7,7 @@ using namespace cv;
 //// Function Declarations ////
 void PointExercise(void);
 void RectExercise(void);
+void RotatedRectExercise(void);
 
 int main()
 {
@@ -32,7 +33,8 @@ int main()
     //waitKey(0);
 
     //PointExercise();
-    RectExercise();
+    //RectExercise();
+    RotatedRectExercise();
 
     return 0;
 }
@@ -78,4 +80,20 @@ void RectExercise(void)
     Rect rc8 = rc2 | rc7;
     cout << "rc7: " << rc7 << endl;
     cout << "rc8 = rc2 | rc7: " << rc8 << endl;
+}
+
+void RotatedRectExercise(void)
+{
+    RotatedRect rr1(Point2f(40, 30), Size2f(40, 20), 30.f);
+
+    Point2f pts[4];
+    rr1.points(pts);
+
+    Rect br = rr1.boundingRect();
+    Rect2f br_f = rr1.boundingRect2f();
+
+    cout << "rr1.center: " << rr1.center << " rr1.size: " << rr1.size << " rr1.angle: " << rr1.angle << endl;
+    cout << "pts[0]: " << pts[0] << " pts[1]: " << pts[1] << endl << "pts[2]: " << pts[2] << " pts[3]: " << pts[3] << endl << endl;
+    cout << "br: " << br << endl;
+    cout << "br_float: " << br_f << endl;
 }
