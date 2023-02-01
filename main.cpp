@@ -6,6 +6,7 @@ using namespace cv;
 
 //// Function Declarations ////
 void PointExercise(void);
+void RectExercise(void);
 
 int main()
 {
@@ -30,7 +31,8 @@ int main()
 
     //waitKey(0);
 
-    PointExercise();
+    //PointExercise();
+    RectExercise();
 
     return 0;
 }
@@ -51,4 +53,29 @@ void PointExercise(void)
     cout << "pt2: " << pt2 << endl;
     cout << "pt3 = pt1 + pt2: " << pt3 << endl;
     cout << "pt4 = pt1 * 2: " << pt4 << endl;
+}
+
+void RectExercise(void)
+{
+    Rect rc1;
+    Rect rc2(10, 10, 60, 40);
+
+    Rect rc3 = rc1 + Size(50, 40);
+    Rect rc4 = rc2 + Point(10, 10);
+
+    Rect rc5 = rc3 & rc4;
+    Rect rc6 = rc3 | rc4;
+
+    cout << "rc1: " << rc1 << endl;
+    cout << "rc2: " << rc2 << endl;
+    cout << "rc3: " << rc3 << endl;
+    cout << "rc4: " << rc4 << endl;
+    cout << "rc5 = rc3 & rc4: " << rc5 << endl;
+    cout << "rc6 = rc3 | rc4: " << rc6 << endl;
+    cout << endl;
+
+    Rect rc7(70, 50, 10, 10);
+    Rect rc8 = rc2 | rc7;
+    cout << "rc7: " << rc7 << endl;
+    cout << "rc8 = rc2 | rc7: " << rc8 << endl;
 }
