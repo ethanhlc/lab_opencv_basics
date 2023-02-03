@@ -16,6 +16,8 @@ void MatOp4(void);
 void MatOp5(void);
 void MatOp6(void);
 void MatOp7(void);
+void VectorOp(void);
+void ScalarOp(void);
 
 int main()
 {
@@ -29,7 +31,9 @@ int main()
     // MatOp4();
     // MatOp5();
     // MatOp6();
-    MatOp7();
+    // MatOp7();
+    // VectorOp();
+    ScalarOp();
 
     return 0;
 }
@@ -274,4 +278,26 @@ void MatOp7(void)
 
     mat1.resize(6, 100);
     cout << "mat1:\n" << mat1 << endl;
+}
+
+void VectorOp(void)
+{
+    Vec3b p1, p2(0, 0, 255);
+    p1[0] = 100;
+    cout << "p1: " << p1 << endl;
+    cout << "p2: " << p2 << endl;
+}
+
+void ScalarOp(void)
+{
+    Scalar gray = 128;
+    cout << "gray: " << gray << endl;
+
+    Scalar yellow(0, 255, 255);
+    cout << "yellow: " << yellow << endl;
+
+    Mat img1(256, 256, CV_8UC3, yellow);
+
+    for (int i = 0; i < 4; i++)
+        cout << yellow[i] << endl;
 }
