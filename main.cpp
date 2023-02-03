@@ -9,6 +9,7 @@ void PointExercise(void);
 void RectExercise(void);
 void RotatedRectExercise(void);
 void MatOp1(void);
+void MatOp2(void);
 
 int main()
 {
@@ -36,7 +37,8 @@ int main()
     //PointExercise();
     //RectExercise();
     //RotatedRectExercise();
-    MatOp1();
+    //MatOp1();
+    MatOp2();
 
     return 0;
 }
@@ -126,4 +128,28 @@ void MatOp1(void)
 
     mat4 = Scalar(255, 0, 0);
     mat5.setTo(1.f);
+}
+
+void MatOp2(void)
+{
+    Mat img1 = imread("img/dog.bmp");
+    
+    Mat img2 = img1;
+    Mat img3;
+    img3 = img1;
+
+    Mat img4 = img1.clone();
+    Mat img5;
+    img1.copyTo(img5);
+
+    img1.setTo(Scalar(0, 255, 255));    // yellow
+
+    imshow("img1", img1);
+    imshow("img2", img2);
+    imshow("img3", img3);
+    imshow("img4", img4);
+    imshow("img5", img5);
+
+    waitKey();
+    destroyAllWindows();
 }
