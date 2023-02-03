@@ -14,6 +14,7 @@ void MatOp2(void);
 void MatOp3(void);
 void MatOp4(void);
 void MatOp5(void);
+void MatOp6(void);
 
 int main()
 {
@@ -25,7 +26,8 @@ int main()
     // MatOp2();
     // MatOp3();
     // MatOp4();
-    MatOp5();
+    // MatOp5();
+    MatOp6();
 
     return 0;
 }
@@ -233,4 +235,19 @@ void MatOp5(void)
     float data[] = {2.f, 1.414f, 3.f, 1.732f};
     Mat mat1(2, 2, CV_32FC1, data);
     cout << "mat1:" << endl << mat1 << endl;
+}
+
+void MatOp6(void)
+{
+    float data[] = {1, 1, 2, 3};
+    Mat mat1(2, 2, CV_32FC1, data);
+    cout << "mat1:\n" << mat1 << endl;
+
+    Mat mat2 = mat1.inv();
+    cout << "mat2:\n" << mat2 << endl;
+
+    cout << "mat1.t():\n" << mat1.t() << endl;
+    cout << "mat1 + 3:\n" << mat1 + 3 << endl;
+    cout << "mat1 + mat2:\n" << mat1 + mat2 << endl;
+    cout << "mat1 * mat2:\n" << mat1 * mat2 << endl;
 }
