@@ -11,6 +11,7 @@ void RectExercise(void);
 void RotatedRectExercise(void);
 void MatOp1(void);
 void MatOp2(void);
+void MatOp3(void);
 
 int main()
 {
@@ -19,7 +20,8 @@ int main()
     // RectExercise();
     // RotatedRectExercise();
     // MatOp1();
-    MatOp2();
+    // MatOp2();
+    MatOp3();
 
     return 0;
 }
@@ -154,6 +156,29 @@ void MatOp2(void)
     imshow("img3", img3);
     imshow("img4", img4);
     imshow("img5", img5);
+
+    waitKey();
+    destroyAllWindows();
+}
+
+void MatOp3(void)
+{
+    Mat img1 = imread("img/cat.bmp");
+
+    if (img1.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat img2 = img1(Rect(220, 120, 340, 240));
+    Mat img3 = img1(Rect(220, 120, 340, 240)).clone();
+
+    img2 = ~img2;
+
+    imshow("img1", img1);
+    imshow("img2", img2);
+    imshow("img3", img3);
 
     waitKey();
     destroyAllWindows();
