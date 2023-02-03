@@ -5,6 +5,7 @@ using namespace std;
 using namespace cv;
 
 //// Function Declarations ////
+void HelloCV(void);
 void PointExercise(void);
 void RectExercise(void);
 void RotatedRectExercise(void);
@@ -13,37 +14,41 @@ void MatOp2(void);
 
 int main()
 {
-    //cout << "Hello OpenCV " << CV_VERSION << endl;
-
-    //Mat img;
-    //img = imread("lenna.bmp", IMREAD_GRAYSCALE);
-
-    //if (img.empty())
-    //{
-    //    cerr << "Image load failed!" << endl;
-    //    return 1;
-    //}
-
-    //vector<int> params;
-    //params.push_back(IMWRITE_JPEG_QUALITY);
-    //params.push_back(95);
-    //imwrite("lenna.jpg", img, params);
-
-    //namedWindow("image");
-    //imshow("image", img);
-
-    //waitKey(0);
-
-    //PointExercise();
-    //RectExercise();
-    //RotatedRectExercise();
-    //MatOp1();
+    // HelloCV();
+    // PointExercise();
+    // RectExercise();
+    // RotatedRectExercise();
+    // MatOp1();
     MatOp2();
 
     return 0;
 }
 
 //// Function Definitions ////
+void HelloCV(void)
+{
+    cout << "Hello OpenCV " << CV_VERSION << endl;
+
+    Mat img;
+    img = imread("img/lenna.bmp", IMREAD_GRAYSCALE);
+
+    if (img.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        exit(-1);
+    }
+
+    vector<int> params;
+    params.push_back(IMWRITE_JPEG_QUALITY);
+    params.push_back(95);
+    imwrite("lenna.jpg", img, params);
+
+    namedWindow("image");
+    imshow("image", img);
+
+    waitKey(0);
+}
+
 void PointExercise(void)
 {
     Point pt1;
@@ -117,11 +122,11 @@ void MatOp1(void)
     Mat mat2 = Mat::ones(3, 3, CV_32FC1);   // 1's matrix
     Mat mat3 = Mat::eye(3, 3, CV_32FC1);    // identity matrix
 
-    float data[] = { 1,2,3,4,5,6 };
+    float data[] = {1,2,3,4,5,6};
     Mat mat4(2, 3, CV_32FC1, data);
 
     Mat mat5 = (Mat_<float>(2, 3) << 1, 2, 3, 4, 5, 6);
-    Mat mat6 = Mat_<uchar>({ 2, 3 }, { 1, 2, 3, 4, 5, 6 });
+    Mat mat6 = Mat_<uchar>({2, 3}, {1, 2, 3, 4, 5, 6});
 
     mat4.create(256, 256, CV_8UC3);
     mat5.create(4, 4, CV_32FC1);
@@ -133,7 +138,7 @@ void MatOp1(void)
 void MatOp2(void)
 {
     Mat img1 = imread("img/dog.bmp");
-    
+
     Mat img2 = img1;
     Mat img3;
     img3 = img1;
