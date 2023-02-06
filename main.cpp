@@ -12,6 +12,11 @@ void drawPolys();
 void drawText1();
 void drawText2();
 void keyboardInvert();
+void mouseEvent();
+
+Mat img;
+Point ptOld;
+void on_mouse(int event, int x, int y, int flags, void *);
 
 int main()
 {
@@ -22,7 +27,8 @@ int main()
     // drawPolys();
     // drawText1();
     // drawText2();
-    keyboardInvert();
+    // keyboardInvert();
+    mouseEvent();
 
     return 0;
 }
@@ -282,4 +288,46 @@ void keyboardInvert()
     }
 
     return;
+}
+
+void mouseEvent()
+{
+    img = imread("img/lenna.bmp");
+
+    if (img.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    namedWindow("img");
+    setMouseCallback("img", on_mouse);
+
+    imshow("img", img);
+    waitKey(0);
+}
+
+void on_mouse(int event, int x, int y, int flags, void *)
+{
+    switch (event)
+    {
+    case EVENT_LBUTTONDOWN:
+        ptOld = Point(x, y);
+        cout << "EVENT_LBUTTONDOWN: " << x << ", " << y << endl;
+        break;
+    case EVENT_LBUTTONUP:
+        cout << "EVENT_LBUTTONUP: " << x << ", " << y << endl;
+        break;
+    case EVENT_MOUSEMOVE:
+        // cout << "EVENT_MOUSEMOVE: " << x << ", " << y << endl;
+        if (flags & EVENT_FLAG_LBUTTON)
+        {
+            line(img, ptOld, Point(x, y), Scalar(0, 255, 255), 2);
+            imshow("img", img);
+            ptOld = Point(x, y);
+        }
+        break;
+    default:
+        break;
+    }
 }
