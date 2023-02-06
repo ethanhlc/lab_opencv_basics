@@ -1,6 +1,18 @@
 # Created by https://www.toptal.com/developers/gitignore/api/c++,visualstudio,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,visualstudio,visualstudiocode
 
+# Personal Files
+## Image Files
+*.bmp
+*.gif
+*.jpg
+*.jpeg
+*.png
+
+## Video Files
+*.avi
+*.mp4
+
 ### C++ ###
 # Prerequisites
 *.d
