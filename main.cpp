@@ -11,6 +11,7 @@ void drawLines();
 void drawPolys();
 void drawText1();
 void drawText2();
+void keyboardInvert();
 
 int main()
 {
@@ -20,7 +21,8 @@ int main()
     // drawLines();
     // drawPolys();
     // drawText1();
-    drawText2();
+    // drawText2();
+    keyboardInvert();
 
     return 0;
 }
@@ -249,4 +251,35 @@ void drawText2()
     waitKey(0);
 
     destroyAllWindows();
+}
+
+void keyboardInvert()
+{
+    Mat img = imread("img/lenna.bmp");
+
+    if (img.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    namedWindow("img");
+    imshow("img", img);
+
+    while (true)
+    {
+        int keycode = waitKey();
+
+        if (keycode == 'i' || keycode == 'I')
+        {
+            img = ~img;
+            imshow("img", img);
+        }
+        else if (keycode == 27 || keycode == 'q' || keycode == 'Q')
+        {
+            break;
+        }
+    }
+
+    return;
 }
