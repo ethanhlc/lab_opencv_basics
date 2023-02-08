@@ -22,6 +22,7 @@ void mask_setTo();
 void mask_copyTo();
 void time_inverse();
 void sum_mean();
+void min_max();
 
 int main()
 {
@@ -40,7 +41,8 @@ int main()
     // mask_setTo();
     // mask_copyTo();
     // time_inverse();
-    sum_mean();
+    // sum_mean();
+    min_max();
 
     return 0;
 }
@@ -527,6 +529,30 @@ void sum_mean()
     cout << "Mean [B]: " << (int)mean(img_color)[0] << endl << endl;
 
     imshow("Image", img_color);
+
+    waitKey();
+    destroyAllWindows();
+
+    return;
+}
+
+void min_max()
+{
+    Mat img_gray = imread("img/lenna.bmp", IMREAD_GRAYSCALE);
+
+    double minVal, maxVal;
+    Point minPos, maxPos;
+    minMaxLoc(img_gray, &minVal, &maxVal, &minPos, &maxPos);
+
+    cout << "minVal " << minVal << " at " << minPos << endl;
+    cout << "maxVal " << maxVal << " at " << maxPos << endl;
+
+    Mat img = imread("img/lenna.bmp", IMREAD_COLOR);
+
+    drawMarker(img, minPos, Scalar(0, 255, 255), MARKER_TILTED_CROSS, 20, 2);
+    drawMarker(img, maxPos, Scalar(255, 255, 0), MARKER_DIAMOND, 20, 2);
+
+    imshow("img", img);
 
     waitKey();
     destroyAllWindows();
