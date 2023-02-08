@@ -18,10 +18,7 @@ void trackBar();
 void on_level_change(int pos, void *userdata);
 void writeData();
 void readData();
-
-String filename = "mydata.json";
-// String filename = "mydata.xml";
-// String filename = "mydata.yml";
+void mask_setTo();
 
 int main()
 {
@@ -36,7 +33,8 @@ int main()
     // mouseEvent();
     // trackBar();
     // writeData();
-    readData();
+    // readData();
+    mask_setTo();
 
     return 0;
 }
@@ -370,6 +368,7 @@ void on_level_change(int pos, void *userdata)
     imshow("image", img);
 }
 
+#if 0 // requires global var String filename = "mydata.json";
 void writeData()
 {
     String name = "Jane";
@@ -428,4 +427,25 @@ void readData()
     cout << "point: " << pt1 << endl;
     cout << "scores: " << Mat(scores).t() << endl;  // transpose matrix to print in one line
     cout << "data:\n" << mat1 << endl;
+}
+#endif
+
+void mask_setTo()
+{
+    Mat src = imread("img/lenna.bmp");
+    Mat mask = imread("img/mask_smile.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty() || mask.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    src.setTo(Scalar(255, 0, 0), mask);
+
+    imshow("src", src);
+    imshow("mask", mask);
+
+    waitKey(0);
+    destroyAllWindows();
 }
