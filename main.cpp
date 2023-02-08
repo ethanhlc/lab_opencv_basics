@@ -20,6 +20,7 @@ void writeData();
 void readData();
 void mask_setTo();
 void mask_copyTo();
+void time_inverse();
 
 int main()
 {
@@ -36,7 +37,8 @@ int main()
     // writeData();
     // readData();
     // mask_setTo();
-    mask_copyTo();
+    // mask_copyTo();
+    time_inverse();
 
     return 0;
 }
@@ -472,4 +474,31 @@ void mask_copyTo()
 
     waitKey();
     destroyAllWindows();
+}
+
+void time_inverse()
+{
+    Mat src = imread("img/lenna.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat dst(src.rows, src.cols, src.type());
+
+    TickMeter tm;
+    tm.start();
+
+    for (int j = 0; j < src.rows; j++)
+    {
+        for (int i = 0; i < src.cols; i++)
+        {
+            dst.at<uchar>(j, i) = ~src.at<uchar>(j, i);
+        }
+    }
+
+    tm.stop();
+    cout << "Image inverse took: " << tm.getTimeMilli() << "ms." << endl;
 }
