@@ -19,6 +19,7 @@ void on_level_change(int pos, void *userdata);
 void writeData();
 void readData();
 void mask_setTo();
+void mask_copyTo();
 
 int main()
 {
@@ -34,7 +35,8 @@ int main()
     // trackBar();
     // writeData();
     // readData();
-    mask_setTo();
+    // mask_setTo();
+    mask_copyTo();
 
     return 0;
 }
@@ -447,5 +449,27 @@ void mask_setTo()
     imshow("mask", mask);
 
     waitKey(0);
+    destroyAllWindows();
+}
+
+void mask_copyTo()
+{
+    Mat src = imread("img/airplane.bmp", IMREAD_COLOR);
+    Mat mask = imread("img/mask_plane.bmp", IMREAD_GRAYSCALE);
+    Mat dst = imread("img/field.bmp", IMREAD_COLOR);
+
+    if (src.empty() || mask.empty() || dst.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    src.copyTo(dst, mask);
+
+    imshow("dst", dst);
+    imshow("src", src);
+    imshow("mask", mask);
+
+    waitKey();
     destroyAllWindows();
 }
