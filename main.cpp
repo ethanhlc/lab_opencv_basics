@@ -13,10 +13,12 @@ void drawText1();
 void drawText2();
 void keyboardInvert();
 void mouseEvent();
-
-Mat img;
-Point ptOld;
 void on_mouse(int event, int x, int y, int flags, void *);
+void trackBar();
+void on_level_change(int pos, void *userdata);
+
+// Mat img;
+// Point ptOld;
 
 int main()
 {
@@ -28,7 +30,8 @@ int main()
     // drawText1();
     // drawText2();
     // keyboardInvert();
-    mouseEvent();
+    // mouseEvent();
+    trackBar();
 
     return 0;
 }
@@ -290,6 +293,7 @@ void keyboardInvert()
     return;
 }
 
+#if 0
 void mouseEvent()
 {
     img = imread("img/lenna.bmp");
@@ -336,4 +340,27 @@ void on_mouse(int event, int x, int y, int flags, void *)
     default:
         break;
     }
+}
+#endif
+
+void trackBar()
+{
+    Mat img = Mat::zeros(400, 400, CV_8UC1);
+
+    int value = 0;
+    namedWindow("image");
+    createTrackbar("level", "image", &value, 16, on_level_change, &img);
+
+    imshow("image", img);
+    waitKey(0);
+
+    return;
+}
+
+void on_level_change(int pos, void *userdata)
+{
+    Mat img = *(Mat *)userdata;
+
+    img.setTo(pos * 16);
+    imshow("image", img);
 }
