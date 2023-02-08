@@ -16,9 +16,11 @@ void mouseEvent();
 void on_mouse(int event, int x, int y, int flags, void *);
 void trackBar();
 void on_level_change(int pos, void *userdata);
+void writeData();
 
-// Mat img;
-// Point ptOld;
+String filename = "mydata.json";
+// String filename = "mydata.xml";
+// String filename = "mydata.yml";
 
 int main()
 {
@@ -31,7 +33,8 @@ int main()
     // drawText2();
     // keyboardInvert();
     // mouseEvent();
-    trackBar();
+    // trackBar();
+    writeData();
 
     return 0;
 }
@@ -363,4 +366,29 @@ void on_level_change(int pos, void *userdata)
 
     img.setTo(pos * 16);
     imshow("image", img);
+}
+
+void writeData()
+{
+    String name = "Jane";
+    int age = 10;
+    Point pt1(100, 200);
+    vector<int> scores = {80, 90, 50};
+    Mat mat1 = (Mat_<float>(2, 2) << 1.0f, 1.5f, 2.0f, 3.2f);
+
+    FileStorage fs(filename, FileStorage::WRITE);
+
+    if (!fs.isOpened())
+    {
+        cerr << "File open failed!" << endl;
+        return;
+    }
+
+    fs << "name" << name;
+    fs << "age" << age;
+    fs << "point" << pt1;
+    fs << "scores" << scores;
+    fs << "data" << mat1;
+
+    fs.release();
 }
