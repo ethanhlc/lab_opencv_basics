@@ -21,6 +21,7 @@ void readData();
 void mask_setTo();
 void mask_copyTo();
 void time_inverse();
+void sum_mean();
 
 int main()
 {
@@ -38,7 +39,8 @@ int main()
     // readData();
     // mask_setTo();
     // mask_copyTo();
-    time_inverse();
+    // time_inverse();
+    sum_mean();
 
     return 0;
 }
@@ -501,4 +503,33 @@ void time_inverse()
 
     tm.stop();
     cout << "Image inverse took: " << tm.getTimeMilli() << "ms." << endl;
+}
+
+void sum_mean()
+{
+    Mat img = imread("img/lenna.bmp", IMREAD_GRAYSCALE);
+    Mat img_color = imread("img/lenna.bmp", IMREAD_COLOR);
+
+    // grayscale
+    cout << "Sum: " << (int)sum(img)[0] << endl;
+    cout << "Mean: " << (int)mean(img)[0] << endl << endl;
+
+    // red
+    cout << "Sum [R]: " << (int)sum(img_color)[2] << endl;
+    cout << "Mean [R]: " << (int)mean(img_color)[2] << endl << endl;
+
+    // green
+    cout << "Sum [G]: " << (int)sum(img_color)[1] << endl;
+    cout << "Mean [G]: " << (int)mean(img_color)[1] << endl << endl;
+
+    // blue
+    cout << "Sum [B]: " << (int)sum(img_color)[0] << endl;
+    cout << "Mean [B]: " << (int)mean(img_color)[0] << endl << endl;
+
+    imshow("Image", img_color);
+
+    waitKey();
+    destroyAllWindows();
+
+    return;
 }
