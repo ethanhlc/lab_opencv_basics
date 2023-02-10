@@ -15,6 +15,10 @@ void contrast2();
 void contrast_trackbar();
 void on_contrast(int pos, void *userdata);
 
+Mat calcGrayHist(const Mat &img);
+Mat getGrayHistImage(const Mat &hist);
+void drawHistogram();
+
 int main(void)
 {
     // brightness1();
@@ -24,7 +28,9 @@ int main(void)
 
     // contrast1();
     // contrast2();
-    contrast_trackbar();
+    // contrast_trackbar();
+
+    drawHistogram();
 
     return 0;
 }
@@ -206,4 +212,59 @@ void on_contrast(int pos, void *userdata)
     Mat dst = src + (src - 128) * fpos;
 
     imshow("img", dst);
+}
+
+Mat calcGrayHist(const Mat &img)
+{
+    CV_Assert(img.type() == CV_8UC1);
+
+    Mat hist;
+    int channels[] = {0};
+    int dims = 1;
+    const int histSize[] = {256};
+    float graylevel[] = {0, 256};
+    const float *ranges[] = {graylevel};
+
+    calcHist(&img, 1, channels, noArray(), hist, dims, histSize, ranges);
+
+    return hist;
+}
+
+Mat getGrayHistImage(const Mat &hist)
+{
+    CV_Assert(hist.type() == CV_32FC1);
+    CV_Assert(hist.size() == Size(1, 256));
+
+    double histMax;
+    minMaxLoc(hist, NULL, &histMax);
+
+    Mat imgHist(100, 256, CV_8UC1, Scalar(255));
+    for (int i = 0; i < 256; i++)
+    {
+        line(imgHist, Point(i, 100),
+             Point(i, 100 - cvRound(hist.at<float>(i, 0) * 100 / histMax)), Scalar(0));
+    }
+
+    return imgHist;
+}
+
+void drawHistogram()
+{
+    Mat img = imread("img/camera.bmp", IMREAD_GRAYSCALE);
+
+    if (img.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat hist = calcGrayHist(img);
+    Mat hist_img = getGrayHistImage(hist);
+
+    imshow("img", img);
+    imshow("histogram", hist_img);
+    // imshow("histogram", getGrayHistImage(calcGrayHist(img));
+
+    waitKey();
+    destroyAllWindows();
 }
