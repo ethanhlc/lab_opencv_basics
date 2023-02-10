@@ -181,7 +181,6 @@ void contrast_trackbar()
 
     namedWindow("img");
     createTrackbar("Contrast", "img", NULL, 100, on_contrast, &img);
-    // setTrackbarMin("Contrast", "img", -1);
     on_contrast(50, &img);
 
     waitKey();
@@ -195,7 +194,7 @@ void on_contrast(int pos, void *userdata)
 
     if (fpos < 51)
     {
-        fpos = 50 - fpos;
+        fpos = fpos - 50;
         fpos = fpos / 50;
     }
     else
