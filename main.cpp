@@ -25,6 +25,7 @@ void sum_mean();
 void min_max();
 void normalize_simple();
 void normalize_img();
+void round_ceil_floor();
 
 int main()
 {
@@ -46,7 +47,8 @@ int main()
     // sum_mean();
     // min_max();
     // normalize_simple();
-    normalize_img();
+    // normalize_img();
+    round_ceil_floor();
 
     return 0;
 }
@@ -587,4 +589,20 @@ void normalize_img()
 
     waitKey();
     destroyAllWindows();
+}
+
+void round_ceil_floor()
+{
+    cout << "cvRound(2.5): " << cvRound(2.5) << endl;
+    cout << "cvRound(2.777): " << cvRound(2.777) << endl;
+    cout << "cvRound(3.5): " << cvRound(3.5) << endl << endl;
+
+    cout << "cvCeil(2.0): " << cvCeil(2.0) << endl;
+    cout << "cvCeil(2.1): " << cvCeil(2.1) << endl;
+    cout << "cvCeil(3.5): " << cvCeil(3.) << endl;
+    cout << "cvCeil(3.9): " << cvCeil(3.9) << endl << endl;
+
+    cout << "cvFloor(2.9): " << cvFloor(2.9) << endl;
+    cout << "cvFloor(3.111): " << cvFloor(3.111) << endl;
+    cout << "cvFloor(4.0): " << cvFloor(4.0) << endl;
 }
