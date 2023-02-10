@@ -17,7 +17,9 @@ void on_contrast(int pos, void *userdata);
 
 Mat calcGrayHist(const Mat &img);
 Mat getGrayHistImage(const Mat &hist);
+Mat getColorHistImage(const Mat &hist, char color);
 void drawHistogram();
+void drawColorHistogram();
 
 int main(void)
 {
@@ -30,7 +32,8 @@ int main(void)
     // contrast2();
     // contrast_trackbar();
 
-    drawHistogram();
+    // drawHistogram();
+    drawColorHistogram();
 
     return 0;
 }
@@ -248,6 +251,31 @@ Mat getGrayHistImage(const Mat &hist)
     return imgHist;
 }
 
+Mat getColorHistImage(const Mat &hist, char color)
+{
+    CV_Assert(hist.type() == CV_32FC1);
+    CV_Assert(hist.size() == Size(1, 256));
+
+    double histMax;
+    minMaxLoc(hist, NULL, &histMax);
+
+    Mat imgHist(100, 256, CV_8UC3, Scalar(255, 255, 255));
+    for (int i = 0; i < 256; i++)
+    {
+        if (color == 'b')
+            line(imgHist, Point(i, 100),
+                 Point(i, 100 - cvRound(hist.at<float>(i, 0) * 100 / histMax)), Scalar(255, 0, 0));
+        else if (color == 'g')
+            line(imgHist, Point(i, 100),
+                 Point(i, 100 - cvRound(hist.at<float>(i, 0) * 100 / histMax)), Scalar(0, 255, 0));
+        else if (color == 'r')
+            line(imgHist, Point(i, 100),
+                 Point(i, 100 - cvRound(hist.at<float>(i, 0) * 100 / histMax)), Scalar(0, 0, 255));
+    }
+
+    return imgHist;
+}
+
 void drawHistogram()
 {
     Mat img = imread("img/camera.bmp", IMREAD_GRAYSCALE);
@@ -260,10 +288,35 @@ void drawHistogram()
 
     Mat hist = calcGrayHist(img);
     Mat hist_img = getGrayHistImage(hist);
+    Mat hist_img_b = getColorHistImage(hist, 'b');
 
     imshow("img", img);
     imshow("histogram", hist_img);
+    imshow("histogram_blue", hist_img_b);
     // imshow("histogram", getGrayHistImage(calcGrayHist(img));
+
+    waitKey();
+    destroyAllWindows();
+}
+
+void drawColorHistogram()
+{
+    Mat img = imread("img/lenna.bmp", IMREAD_COLOR);
+
+    if (img.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    // split channels into separate Mat objects
+    vector<Mat> bgr_lenna;
+    split(img, bgr_lenna);
+
+    imshow("lenna", img);
+    imshow("hist_blue", getColorHistImage(calcGrayHist(bgr_lenna[0]), 'b'));
+    imshow("hist_green", getColorHistImage(calcGrayHist(bgr_lenna[1]), 'g'));
+    imshow("hist_red", getColorHistImage(calcGrayHist(bgr_lenna[2]), 'r'));
 
     waitKey();
     destroyAllWindows();
