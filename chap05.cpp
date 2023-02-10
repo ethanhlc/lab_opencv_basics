@@ -12,6 +12,8 @@ void on_brightness(int pos, void *userdata);
 
 void contrast1();
 void contrast2();
+void contrast_trackbar();
+void on_contrast(int pos, void *userdata);
 
 int main(void)
 {
@@ -21,7 +23,8 @@ int main(void)
     // brightness4();
 
     // contrast1();
-    contrast2();
+    // contrast2();
+    contrast_trackbar();
 
     return 0;
 }
@@ -170,4 +173,38 @@ void contrast2()
     waitKey();
 
     destroyAllWindows();
+}
+
+void contrast_trackbar()
+{
+    Mat img = imread("img/lenna.bmp", IMREAD_GRAYSCALE);
+
+    namedWindow("img");
+    createTrackbar("Contrast", "img", NULL, 100, on_contrast, &img);
+    // setTrackbarMin("Contrast", "img", -1);
+    on_contrast(50, &img);
+
+    waitKey();
+    destroyAllWindows();
+}
+
+void on_contrast(int pos, void *userdata)
+{
+    Mat src = *(Mat *)userdata;
+    float fpos = pos;
+
+    if (fpos < 51)
+    {
+        fpos = 50 - fpos;
+        fpos = fpos / 50;
+    }
+    else
+    {
+        fpos = fpos - 50;
+        fpos = fpos / 10;
+    }
+
+    Mat dst = src + (src - 128) * fpos;
+
+    imshow("img", dst);
 }
