@@ -136,7 +136,7 @@ void camera_in_video_out()
     int w = cvRound(cap.get(CAP_PROP_FRAME_WIDTH));
     int h = cvRound(cap.get(CAP_PROP_FRAME_HEIGHT));
     // double fps = cvRound(cap.get(CAP_PROP_FPS));
-    double fps = 30;
+    double fps = 30;    // cap.get(CAP_PROP_FPS) depends on camera
 
     int fourcc = VideoWriter::fourcc('D', 'I', 'V', 'X');
     int delay = cvRound(1000 / fps);
@@ -219,7 +219,7 @@ void drawPolys()
     pts.push_back(Point(350, 300));
     pts.push_back(Point(350, 350));
     pts.push_back(Point(250, 350));
-    fillPoly(img, pts, Scalar(0, 255, 255));
+    fillPoly(img, pts, Scalar(0, 255, 255));    // fill poly created w/ 1px border
     polylines(img, pts, true, Scalar(255, 0, 255), 2);
 
     imshow("img", img);
@@ -269,6 +269,7 @@ void drawText2()
     Size sizeText = getTextSize(text, fontFace, fontScale, thickness, 0);
     Size sizeImg = img.size();
 
+    // draw text in center of img & surround w/ rectangle
     Point org((sizeImg.width - sizeText.width) / 2, (sizeImg.height + sizeText.height) / 2);
     putText(img, text, org, fontFace, fontScale, Scalar(255, 0, 0), thickness);
     rectangle(img, org, org + Point(sizeText.width, -sizeText.height), Scalar(255, 0, 0), 1);
@@ -296,6 +297,7 @@ void keyboardInvert()
     {
         int keycode = waitKey();
 
+        // invert img if 'i/I' pressed. quit if 'q' pressed
         if (keycode == 'i' || keycode == 'I')
         {
             img = ~img;
@@ -328,6 +330,7 @@ void mouseEvent()
     waitKey(0);
 }
 
+// callback function for setMouseCallback (used global img var)
 void on_mouse(int event, int x, int y, int flags, void *)
 {
     switch (event)
@@ -374,6 +377,7 @@ void trackBar()
     return;
 }
 
+// callback function for createTrackbar (recv img Mat as *userdata)
 void on_level_change(int pos, void *userdata)
 {
     Mat img = *(Mat *)userdata;
@@ -455,7 +459,7 @@ void mask_setTo()
         return;
     }
 
-    src.setTo(Scalar(255, 0, 0), mask);
+    src.setTo(Scalar(255, 0, 0), mask); // set mask portion to specified values
 
     imshow("src", src);
     imshow("mask", mask);
@@ -476,7 +480,7 @@ void mask_copyTo()
         return;
     }
 
-    src.copyTo(dst, mask);
+    src.copyTo(dst, mask);  // copy mask portion of src & paste to dst
 
     imshow("dst", dst);
     imshow("src", src);
@@ -498,8 +502,8 @@ void time_inverse()
 
     Mat dst(src.rows, src.cols, src.type());
 
-    TickMeter tm;
-    tm.start();
+    TickMeter tm;   // create TickMeter object
+    tm.start();     // start time measure
 
     for (int j = 0; j < src.rows; j++)
     {
@@ -509,7 +513,7 @@ void time_inverse()
         }
     }
 
-    tm.stop();
+    tm.stop();      // end time measure & get time in ms
     cout << "Image inverse took: " << tm.getTimeMilli() << "ms." << endl;
 }
 
@@ -553,6 +557,7 @@ void min_max()
     cout << "minVal " << minVal << " at " << minPos << endl;
     cout << "maxVal " << maxVal << " at " << maxPos << endl;
 
+    // draw markers at min/max positions
     Mat img = imread("img/lenna.bmp", IMREAD_COLOR);
 
     drawMarker(img, minPos, Scalar(0, 255, 255), MARKER_TILTED_CROSS, 20, 2);
@@ -582,7 +587,7 @@ void normalize_img()
     Mat src = imread("img/hawkes.bmp", IMREAD_GRAYSCALE);
 
     Mat dst;
-    normalize(src, dst, 0, 255, NORM_MINMAX);
+    normalize(src, dst, 0, 255, NORM_MINMAX);   // normalize brightness to 0~255
 
     imshow("src", src);
     imshow("dst", dst);
@@ -593,15 +598,18 @@ void normalize_img()
 
 void round_ceil_floor()
 {
+    // round to nearest value. if 0.5, round to nearest even value
     cout << "cvRound(2.5): " << cvRound(2.5) << endl;
     cout << "cvRound(2.777): " << cvRound(2.777) << endl;
     cout << "cvRound(3.5): " << cvRound(3.5) << endl << endl;
 
+    // round up to integer
     cout << "cvCeil(2.0): " << cvCeil(2.0) << endl;
     cout << "cvCeil(2.1): " << cvCeil(2.1) << endl;
     cout << "cvCeil(3.5): " << cvCeil(3.) << endl;
     cout << "cvCeil(3.9): " << cvCeil(3.9) << endl << endl;
 
+    // round down to integer
     cout << "cvFloor(2.9): " << cvFloor(2.9) << endl;
     cout << "cvFloor(3.111): " << cvFloor(3.111) << endl;
     cout << "cvFloor(4.0): " << cvFloor(4.0) << endl;
