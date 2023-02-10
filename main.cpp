@@ -23,6 +23,8 @@ void mask_copyTo();
 void time_inverse();
 void sum_mean();
 void min_max();
+void normalize_simple();
+void normalize_img();
 
 int main()
 {
@@ -42,7 +44,9 @@ int main()
     // mask_copyTo();
     // time_inverse();
     // sum_mean();
-    min_max();
+    // min_max();
+    // normalize_simple();
+    normalize_img();
 
     return 0;
 }
@@ -558,4 +562,29 @@ void min_max()
     destroyAllWindows();
 
     return;
+}
+
+void normalize_simple()
+{
+    Mat src = Mat_<float>({1, 5}, {-1.f, -0.5f, 0.f, 0.5f, 1.f});
+
+    Mat dst;
+    normalize(src, dst, 0, 255, NORM_MINMAX, CV_8UC1);
+
+    cout << "src: " << src << endl;
+    cout << "dst: " << dst << endl;
+}
+
+void normalize_img()
+{
+    Mat src = imread("img/hawkes.bmp", IMREAD_GRAYSCALE);
+
+    Mat dst;
+    normalize(src, dst, 0, 255, NORM_MINMAX);
+
+    imshow("src", src);
+    imshow("dst", dst);
+
+    waitKey();
+    destroyAllWindows();
 }
