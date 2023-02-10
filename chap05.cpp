@@ -7,12 +7,15 @@ using namespace cv;
 void brightness1();
 void brightness2();
 void brightness3();
+void brightness4();
+void on_brightness(int pos, void *userdata);
 
 int main(void)
 {
     // brightness1();
     // brightness2();
-    brightness3();
+    // brightness3();
+    brightness4();
 
     return 0;
 }
@@ -100,4 +103,25 @@ void brightness3()
     waitKey();
 
     destroyAllWindows();
+}
+
+void brightness4()
+{
+    Mat img = imread("img/lenna.bmp", IMREAD_GRAYSCALE);
+
+    namedWindow("img");
+    createTrackbar("Brightness", "img", NULL, 100, on_brightness, &img);
+    on_brightness(0, &img);
+
+    waitKey();
+    destroyAllWindows();
+}
+
+void on_brightness(int pos, void *userdata)
+{
+    Mat src = *(Mat *)userdata;
+    Mat dst = src + pos;
+    // *(Mat *)userdata = *(Mat *)userdata + pos;   // wrong, constant inc in brightness
+
+    imshow("img", dst);
 }
