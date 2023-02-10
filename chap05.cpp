@@ -20,6 +20,7 @@ Mat getGrayHistImage(const Mat &hist);
 Mat getColorHistImage(const Mat &hist, char color, double histMax);
 void drawHistogram();
 void drawColorHistogram();
+void histogramStretching();
 
 int main(void)
 {
@@ -33,7 +34,8 @@ int main(void)
     // contrast_trackbar();
 
     // drawHistogram();
-    drawColorHistogram();
+    // drawColorHistogram();
+    histogramStretching();
 
     return 0;
 }
@@ -333,6 +335,45 @@ void drawColorHistogram()
     imshow("hist_blue", getColorHistImage(hist_b, 'b', histMax));
     imshow("hist_green", getColorHistImage(hist_g, 'g', histMax));
     imshow("hist_red", getColorHistImage(hist_r, 'r', histMax));
+
+    waitKey();
+    destroyAllWindows();
+}
+
+void histogramStretching()  // basically normalization
+{
+    Mat src = imread("img/hawkes.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    double gmin, gmax;
+    minMaxLoc(src, &gmin, &gmax);
+
+    Mat dst = (src - gmin) * 255 / (gmax - gmin);
+
+    imshow("src", src);
+    imshow("srcHist", getGrayHistImage(calcGrayHist(src)));
+
+    imshow("dst", dst);
+    imshow("dstHist", getGrayHistImage(calcGrayHist(dst)));
+
+    Mat img_norm;
+    normalize(src, img_norm, 0, 255, NORM_MINMAX);
+    imshow("norm", img_norm);
+    imshow("normHist", getGrayHistImage(calcGrayHist(img_norm)));
+
+    // use absdiff() to calculate difference between images
+    // Mat img_diff;
+    // double maxdiff;
+    // absdiff(dst, img_norm, img_diff);
+    // imshow("diff", img_diff);
+
+    // minMaxLoc(img_diff, NULL, &maxdiff);
+    // cout << "Max diff: " << maxdiff << endl;    // print max difference value
 
     waitKey();
     destroyAllWindows();
