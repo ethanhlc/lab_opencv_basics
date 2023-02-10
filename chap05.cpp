@@ -17,7 +17,7 @@ void on_contrast(int pos, void *userdata);
 
 Mat calcGrayHist(const Mat &img);
 Mat getGrayHistImage(const Mat &hist);
-Mat getColorHistImage(const Mat &hist, char color);
+Mat getColorHistImage(const Mat &hist, char color, double histMax);
 void drawHistogram();
 void drawColorHistogram();
 
@@ -251,13 +251,13 @@ Mat getGrayHistImage(const Mat &hist)
     return imgHist;
 }
 
-Mat getColorHistImage(const Mat &hist, char color)
+Mat getColorHistImage(const Mat &hist, char color, double histMax)
 {
     CV_Assert(hist.type() == CV_32FC1);
     CV_Assert(hist.size() == Size(1, 256));
 
-    double histMax;
-    minMaxLoc(hist, NULL, &histMax);
+    // double histMax;
+    // minMaxLoc(hist, NULL, &histMax);
 
     Mat imgHist(100, 256, CV_8UC3, Scalar(255, 255, 255));
     for (int i = 0; i < 256; i++)
@@ -288,11 +288,9 @@ void drawHistogram()
 
     Mat hist = calcGrayHist(img);
     Mat hist_img = getGrayHistImage(hist);
-    Mat hist_img_b = getColorHistImage(hist, 'b');
 
     imshow("img", img);
     imshow("histogram", hist_img);
-    imshow("histogram_blue", hist_img_b);
     // imshow("histogram", getGrayHistImage(calcGrayHist(img));
 
     waitKey();
@@ -313,10 +311,28 @@ void drawColorHistogram()
     vector<Mat> bgr_lenna;
     split(img, bgr_lenna);
 
+    // get max hist value (draw correctly weighted histograms)
+    Mat hist_b = calcGrayHist(bgr_lenna[0]);
+    Mat hist_g = calcGrayHist(bgr_lenna[1]);
+    Mat hist_r = calcGrayHist(bgr_lenna[2]);
+
+    double histMax;
+    double histMax_color[3];
+    minMaxLoc(hist_b, NULL, &histMax_color[0]);
+    minMaxLoc(hist_g, NULL, &histMax_color[1]);
+    minMaxLoc(hist_r, NULL, &histMax_color[2]);
+
+    histMax = histMax_color[0];
+    for (int i = 1; i < 3; i++)
+    {
+        if (histMax_color[i] > histMax)
+            histMax = histMax_color[i];
+    }
+
     imshow("lenna", img);
-    imshow("hist_blue", getColorHistImage(calcGrayHist(bgr_lenna[0]), 'b'));
-    imshow("hist_green", getColorHistImage(calcGrayHist(bgr_lenna[1]), 'g'));
-    imshow("hist_red", getColorHistImage(calcGrayHist(bgr_lenna[2]), 'r'));
+    imshow("hist_blue", getColorHistImage(hist_b, 'b', histMax));
+    imshow("hist_green", getColorHistImage(hist_g, 'g', histMax));
+    imshow("hist_red", getColorHistImage(hist_r, 'r', histMax));
 
     waitKey();
     destroyAllWindows();
