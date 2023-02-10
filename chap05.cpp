@@ -10,12 +10,16 @@ void brightness3();
 void brightness4();
 void on_brightness(int pos, void *userdata);
 
+void contrast1();
+
 int main(void)
 {
     // brightness1();
     // brightness2();
     // brightness3();
-    brightness4();
+    // brightness4();
+
+    contrast1();
 
     return 0;
 }
@@ -124,4 +128,24 @@ void on_brightness(int pos, void *userdata)
     // *(Mat *)userdata = *(Mat *)userdata + pos;   // wrong, constant inc in brightness
 
     imshow("img", dst);
+}
+
+void contrast1()
+{
+    Mat src = imread("img/lenna.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    float s = 2.f;
+    Mat dst = s * src;
+
+    imshow("src", src);
+    imshow("dst", dst);
+    waitKey();
+
+    destroyAllWindows();
 }
