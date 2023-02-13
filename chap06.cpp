@@ -6,11 +6,13 @@ using namespace cv;
 
 void imgAdd();
 void cameraDiff();
+void logicalOp();
 
 int main(void)
 {
     // imgAdd();
-    cameraDiff();
+    // cameraDiff();
+    logicalOp();
 
     return 0;
 }
@@ -67,5 +69,42 @@ void cameraDiff()
             cvtColor(orig_frame, orig_frame, COLOR_BGR2GRAY);
         }
     }
+    destroyAllWindows();
+}
+
+void logicalOp()
+{
+    Mat src1 = imread("img/lenna256.bmp", IMREAD_GRAYSCALE);
+    Mat src2 = imread("img/square.bmp", IMREAD_GRAYSCALE);
+
+    if (src1.empty() || src2.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    imshow("src1", src1);
+    imshow("src2", src2);
+
+    Mat dst1, dst2, dst3, dst4;
+
+    bitwise_and(src1, src2, dst1);
+    bitwise_or(src1, src2, dst2);
+    bitwise_xor(src1, src2, dst3);
+    bitwise_not(src1, dst4);
+
+    imshow("dst1", dst1);
+    cout << "src1 AND src2" << endl;
+    waitKey();
+    imshow("dst2", dst2);
+    cout << "src1 OR src2" << endl;
+    waitKey();
+    imshow("dst3", dst3);
+    cout << "src1 XOR src2" << endl;
+    waitKey();
+    imshow("dst4", dst4);
+    cout << "NOT src1" << endl;
+
+    waitKey();
     destroyAllWindows();
 }
