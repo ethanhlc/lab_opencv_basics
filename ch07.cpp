@@ -8,13 +8,15 @@ void filter_emboss();
 void blurring_mean();
 void blurring_gaussian();
 void unsharpen_mask();
+void noise_gaussian();
 
 int main(void)
 {
     // filter_emboss();
     // blurring_mean();
     // blurring_gaussian();
-    unsharpen_mask();
+    // unsharpen_mask();
+    noise_gaussian();
 
     return 0;
 }
@@ -145,6 +147,37 @@ void unsharpen_mask()
 
         String winname = format("dst%d", sigma);
         imshow(winname, dst);
+        waitKey();
+    }
+
+    destroyAllWindows();
+}
+
+void noise_gaussian()
+{
+    Mat src = imread("img/lenna.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    imshow("src", src);
+
+    for (int stddev = 10; stddev <= 30; stddev += 10)
+    {
+        Mat noise(src.size(), CV_32FC1);
+        randn(noise, 0, stddev);
+
+        Mat dst;
+        add(src, noise, dst, Mat(), CV_8UC1);
+
+        String desc = format("stddev = %d", stddev);
+        putText(dst, desc, Point(10, 30), FONT_HERSHEY_SIMPLEX, 1.0,
+                Scalar(255), 2, LINE_AA);
+
+        imshow(desc, dst);
         waitKey();
     }
 
