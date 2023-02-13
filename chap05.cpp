@@ -21,6 +21,7 @@ Mat getColorHistImage(const Mat &hist, char color, double histMax);
 void drawHistogram();
 void drawColorHistogram();
 void histogramStretching();
+void histogramEqualization();
 
 int main(void)
 {
@@ -35,7 +36,8 @@ int main(void)
 
     // drawHistogram();
     // drawColorHistogram();
-    histogramStretching();
+    // histogramStretching();
+    histogramEqualization();
 
     return 0;
 }
@@ -374,6 +376,29 @@ void histogramStretching()  // basically normalization
 
     // minMaxLoc(img_diff, NULL, &maxdiff);
     // cout << "Max diff: " << maxdiff << endl;    // print max difference value
+
+    waitKey();
+    destroyAllWindows();
+}
+
+void histogramEqualization()
+{
+    Mat src = imread("img/hawkes.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat dst;
+    equalizeHist(src, dst);
+
+    imshow("src", src);
+    imshow("srcHist", getGrayHistImage(calcGrayHist(src)));
+
+    imshow("dst", dst);
+    imshow("dstHist", getGrayHistImage(calcGrayHist(dst)));
 
     waitKey();
     destroyAllWindows();
