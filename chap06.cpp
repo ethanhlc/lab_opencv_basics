@@ -56,9 +56,15 @@ void cameraDiff()
         imshow("live", live_frame);
         imshow("diff", diff_frame);
 
-        if (waitKey(10) == 'q')
+        char keypress = waitKey(10);
+        if (keypress == 'q')
         {
             break;
+        }
+        else if (keypress == 's')
+        {
+            cap >> orig_frame;
+            cvtColor(orig_frame, orig_frame, COLOR_BGR2GRAY);
         }
     }
     destroyAllWindows();
