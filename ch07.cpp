@@ -52,9 +52,23 @@ void blurring_mean()
 
     Mat dst3, dst5, dst7;
 
+
+    TickMeter tm;   // create TickMeter object
+    tm.start();     // start time measure
     blur(src, dst3, Size(3, 3));
+    tm.stop();      // end time measure & get time in ms
+    cout << "3x3 took: " << tm.getTimeMilli() << "ms." << endl;
+
+    tm.start();     // start time measure
     blur(src, dst5, Size(5, 5));
+    tm.stop();      // end time measure & get time in ms
+    cout << "5x5 took: " << tm.getTimeMilli() << "ms." << endl;
+
+    tm.start();     // start time measure
     blur(src, dst7, Size(7, 7));
+    tm.stop();      // end time measure & get time in ms
+    cout << "7x7 took: " << tm.getTimeMilli() << "ms." << endl;
+
 
     // print filter kernel size @ top left
     putText(dst3, "Mean: 3x3", Point(10, 30), FONT_HERSHEY_SIMPLEX, 1.0,
