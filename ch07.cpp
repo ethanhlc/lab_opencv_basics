@@ -7,12 +7,14 @@ using namespace cv;
 void filter_emboss();
 void blurring_mean();
 void blurring_gaussian();
+void unsharpen_mask();
 
 int main(void)
 {
     // filter_emboss();
     // blurring_mean();
-    blurring_gaussian();
+    // blurring_gaussian();
+    unsharpen_mask();
 
     return 0;
 }
@@ -90,7 +92,7 @@ void blurring_mean()
 
 void blurring_gaussian()
 {
-    Mat src = imread("img/rose.bmp", IMREAD_GRAYSCALE);
+    Mat src = imread("img/rose.bmp");
 
     if (src.empty())
     {
@@ -109,7 +111,40 @@ void blurring_gaussian()
         putText(dst, text, Point(10, 30), FONT_HERSHEY_SIMPLEX, 1.0,
                 Scalar(255), 2, LINE_AA);
 
-        imshow("dst", dst);
+        String winname = format("dst%d", sigma);
+        imshow(winname, dst);
+        waitKey();
+    }
+
+    destroyAllWindows();
+}
+
+void unsharpen_mask()
+{
+    Mat src = imread("img/rose.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    imshow("src", src);
+
+    for (int sigma = 1; sigma <= 5; sigma++)
+    {
+        Mat blurred;
+        GaussianBlur(src, blurred, Size(0, 0), sigma);
+
+        float alpha = 1.f;
+        Mat dst = (1 + alpha) * src - alpha * blurred;
+
+        String text = format("sigma: %d", sigma);
+        putText(dst, text, Point(10, 30), FONT_HERSHEY_SIMPLEX, 1.0,
+                Scalar(255), 2, LINE_AA);
+
+        String winname = format("dst%d", sigma);
+        imshow(winname, dst);
         waitKey();
     }
 
