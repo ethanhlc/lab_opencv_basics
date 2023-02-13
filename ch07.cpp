@@ -6,11 +6,13 @@ using namespace cv;
 
 void filter_emboss();
 void blurring_mean();
+void blurring_gaussian();
 
 int main(void)
 {
     // filter_emboss();
-    blurring_mean();
+    // blurring_mean();
+    blurring_gaussian();
 
     return 0;
 }
@@ -83,5 +85,33 @@ void blurring_mean()
     imshow("dst7", dst7);
 
     waitKey();
+    destroyAllWindows();
+}
+
+void blurring_gaussian()
+{
+    Mat src = imread("img/rose.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    imshow("src", src);
+
+    Mat dst;
+    for (int sigma = 1; sigma <= 5; sigma++)
+    {
+        GaussianBlur(src, dst, Size(), (double)sigma);
+
+        String text = format("sigma = %d", sigma);
+        putText(dst, text, Point(10, 30), FONT_HERSHEY_SIMPLEX, 1.0,
+                Scalar(255), 2, LINE_AA);
+
+        imshow("dst", dst);
+        waitKey();
+    }
+
     destroyAllWindows();
 }
