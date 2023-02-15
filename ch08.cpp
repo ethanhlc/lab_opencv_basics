@@ -43,6 +43,13 @@ void affine_transform()
     imshow("src", src);
     imshow("dst", dst);
 
+    // get transformation of specific points using M transform matrix
+    vector<Point2f> source = {Point2f(0,0), Point2f(639,0), Point2f(639, 479)};
+    vector<Point2f> destination;
+    transform(source, destination, M);
+    cout << source << endl;
+    cout << destination << endl;
+
     waitKey();
     destroyAllWindows();
 }
