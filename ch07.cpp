@@ -203,13 +203,25 @@ void filter_bilateral()
     randn(noise, 0, 5);
     add(src, noise, src, noArray(), CV_8UC1);
 
+    // get elapsed time
+    TickMeter tm;
+    tm.start();
+
     // simple gaussian blur to remove noise
     Mat dst1;
     GaussianBlur(src, dst1, Size(), 5);
 
+    tm.stop();
+    cout << "Gaussian Blur Time: " << tm.getTimeMilli() << endl;
+    tm.reset();
+    tm.start();
+
     // bilateral filter to remove noise
     Mat dst2;
     bilateralFilter(src, dst2, -1, 10, 5);
+
+    tm.stop();
+    cout << "Bilateral Filter Time: " << tm.getTimeMilli() << endl;
 
     imshow("src_noise", src);
     imshow("dst1_gaussian", dst1);
