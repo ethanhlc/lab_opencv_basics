@@ -6,10 +6,12 @@ using namespace cv;
 
 /// Function Declarations
 void affine_transform();
+void affine_translate();
 
 int main(void)
 {
-    affine_transform();
+    // affine_transform();
+    affine_translate();
 
     return 0;
 }
@@ -49,6 +51,30 @@ void affine_transform()
     transform(source, destination, M);
     cout << source << endl;
     cout << destination << endl;
+
+    waitKey();
+    destroyAllWindows();
+}
+
+void affine_translate()
+{
+    Mat src = imread("img/tekapo.bmp");
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat M = Mat_<double>({2,3}, {1, 0, 150, 0, 1, 100});
+
+    Mat dst;
+    warpAffine(src, dst, M, Size(0, 0));
+    // warpAffine(src, dst, M, Size(800, 600), 1, 0, Scalar(255, 255, 0));
+    // warpAffine(src, dst, M, Size(0, 0), INTER_LINEAR, BORDER_REFLECT_101);
+
+    imshow("src", src);
+    imshow("dst", dst);
 
     waitKey();
     destroyAllWindows();
