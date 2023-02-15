@@ -10,6 +10,7 @@ void blurring_gaussian();
 void unsharpen_mask();
 void noise_gaussian();
 void filter_bilateral();
+void filter_median();
 
 int main(void)
 {
@@ -18,7 +19,8 @@ int main(void)
     // blurring_gaussian();
     // unsharpen_mask();
     // noise_gaussian();
-    filter_bilateral();
+    // filter_bilateral();
+    filter_median();
 
     return 0;
 }
@@ -226,6 +228,52 @@ void filter_bilateral()
     imshow("src_noise", src);
     imshow("dst1_gaussian", dst1);
     imshow("dst2_bilateral", dst2);
+
+    waitKey();
+    destroyAllWindows();
+}
+
+void filter_median()
+{
+    Mat src = imread("img/lenna.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    imshow("src_orig", src);
+
+    int num = (int)(src.total() * 0.1);
+    for (int i = 0; i < num; i++)
+    {
+        int x = rand() % src.cols;
+        int y = rand() % src.rows;
+        src.at<uchar>(y, x) = (i % 2) * 255;
+    }
+
+    // get elapsed time
+    TickMeter tm;
+    tm.start();
+
+    Mat dst1;
+    GaussianBlur(src, dst1, Size(), 1);
+
+    tm.stop();
+    cout << "Gaussian Blur Time: " << tm.getTimeMilli() << endl;
+    tm.reset();
+    tm.start();
+
+    Mat dst2;
+    medianBlur(src, dst2, 3);
+
+    tm.stop();
+    cout << "Median Blur Time: " << tm.getTimeMilli() << endl;
+
+    imshow("src", src);
+    imshow("dst1_gaussian", dst1);
+    imshow("dst2_median", dst2);
 
     waitKey();
     destroyAllWindows();
