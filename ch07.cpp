@@ -9,6 +9,7 @@ void blurring_mean();
 void blurring_gaussian();
 void unsharpen_mask();
 void noise_gaussian();
+void filter_bilateral();
 
 int main(void)
 {
@@ -16,7 +17,8 @@ int main(void)
     // blurring_mean();
     // blurring_gaussian();
     // unsharpen_mask();
-    noise_gaussian();
+    // noise_gaussian();
+    filter_bilateral();
 
     return 0;
 }
@@ -181,5 +183,38 @@ void noise_gaussian()
         waitKey();
     }
 
+    destroyAllWindows();
+}
+
+void filter_bilateral()
+{
+    Mat src = imread("img/lenna.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    imshow("src_orig", src);
+
+    // add noise to img
+    Mat noise(src.size(), CV_32SC1);
+    randn(noise, 0, 5);
+    add(src, noise, src, noArray(), CV_8UC1);
+
+    // simple gaussian blur to remove noise
+    Mat dst1;
+    GaussianBlur(src, dst1, Size(), 5);
+
+    // bilateral filter to remove noise
+    Mat dst2;
+    bilateralFilter(src, dst2, -1, 10, 5);
+
+    imshow("src_noise", src);
+    imshow("dst1_gaussian", dst1);
+    imshow("dst2_bilateral", dst2);
+
+    waitKey();
     destroyAllWindows();
 }
