@@ -8,12 +8,14 @@ using namespace cv;
 void affine_transform();
 void affine_translate();
 void affine_shear();
+void affine_scale();    // resize
 
 int main(void)
 {
     // affine_transform();
     // affine_translate();
-    affine_shear();
+    // affine_shear();
+    affine_scale();
 
     return 0;
 }
@@ -105,6 +107,32 @@ void affine_shear()
     imshow("src", src);
     imshow("dst_x", dst_x);
     imshow("dst_y", dst_y);
+
+    waitKey();
+    destroyAllWindows();
+}
+
+void affine_scale()
+{
+    Mat src = imread("img/rose.bmp");
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat dst1, dst2, dst3, dst4;
+    resize(src, dst1, Size(0, 0), 4, 4, INTER_NEAREST);
+    resize(src, dst2, Size(1920, 1280));    // INTER_LINEAR
+    resize(src, dst3, Size(1920, 1280), 0, 0, INTER_CUBIC);
+    resize(src, dst4, Size(1920, 1280), 0, 0, INTER_LANCZOS4);
+
+    imshow("src", src);
+    imshow("dst1", dst1(Rect(400, 500, 400, 400)));
+    imshow("dst2", dst2(Rect(400, 500, 400, 400)));
+    imshow("dst3", dst3(Rect(400, 500, 400, 400)));
+    imshow("dst4", dst4(Rect(400, 500, 400, 400)));
 
     waitKey();
     destroyAllWindows();
