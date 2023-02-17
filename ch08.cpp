@@ -10,6 +10,7 @@ void affine_translate();
 void affine_shear();
 void affine_scale();    // resize
 void affine_rotation();
+void affine_flip();
 
 int main(void)
 {
@@ -17,7 +18,8 @@ int main(void)
     // affine_translate();
     // affine_shear();
     // affine_scale();
-    affine_rotation();
+    // affine_rotation();
+    affine_flip();
 
     return 0;
 }
@@ -187,5 +189,34 @@ void affine_rotation()
     imshow("dst_resize", dst_resize);
 
     waitKey();
+    destroyAllWindows();
+}
+
+void affine_flip()
+{
+    Mat src = imread("img/tekapo.bmp", IMREAD_COLOR);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    imshow("src", src);
+
+    Mat dst;
+    int flipCode[] = {1, 0, -1};
+    for (int i = 0; i < 3; i++)
+    {
+        flip(src, dst, flipCode[i]);
+
+        String desc = format("flipCode: %d", flipCode[i]);
+        putText(dst, desc, Point(10, 30), FONT_HERSHEY_SIMPLEX, 1.0,
+                Scalar(255, 0, 0), 1, LINE_AA);
+
+        imshow(desc, dst);
+        waitKey();
+    }
+
     destroyAllWindows();
 }
