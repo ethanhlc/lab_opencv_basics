@@ -11,6 +11,10 @@ void affine_shear();
 void affine_scale();    // resize
 void affine_rotation();
 void affine_flip();
+void perspective();
+void on_Mouse(int event, int x, int y, int flags, void *userdata);
+
+Point2f srcQuad[4];     // src points for perpective warp
 
 int main(void)
 {
@@ -19,7 +23,8 @@ int main(void)
     // affine_shear();
     // affine_scale();
     // affine_rotation();
-    affine_flip();
+    // affine_flip();
+    perspective();
 
     return 0;
 }
@@ -219,4 +224,58 @@ void affine_flip()
     }
 
     destroyAllWindows();
+}
+
+void perspective()
+{
+    Mat src = imread("img/card.bmp");
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    namedWindow("src");
+    setMouseCallback("src", on_Mouse, &src);
+
+    imshow("src", src);
+
+    waitKey();
+    destroyAllWindows();
+}
+
+void on_Mouse(int event, int x, int y, int flags, void *userdata)
+{
+    static int cnt = 0;
+    int w = 200;
+    int h = 300;
+
+    Mat src = *(Mat *)userdata;
+
+    Point2f dstQuad[4] = {Point2f(0, 0),
+                          Point2f(w - 1, 0),
+                          Point2f(w - 1, h - 1),
+                          Point2f(0, h - 1)};
+
+    if (event == EVENT_LBUTTONDOWN)
+    {
+        if (cnt < 4)
+        {
+            srcQuad[cnt++] = Point2f(x, y);
+
+            circle(src, Point(x, y), 5, Scalar(0, 0, 255), -1);
+            imshow("src", src);
+
+            if (cnt == 4)
+            {
+                Mat pers = getPerspectiveTransform(srcQuad, dstQuad);
+
+                Mat dst;
+                warpPerspective(src, dst, pers, Size(w, h));
+
+                imshow("dst", dst);
+            }
+        }
+    }
 }
