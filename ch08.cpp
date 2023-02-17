@@ -150,13 +150,33 @@ void affine_rotation()
         return;
     }
 
-    Mat M = getRotationMatrix2D(Point2f(src.cols / 2, src.rows / 2), 20, 1);
+    double degrees = 20.0;
 
-    Mat dst_orig;
+    Mat M = getRotationMatrix2D(Point2f(src.cols / 2, src.rows / 2), degrees, 1);
+
+    Mat dst_orig, dst_resize;
     warpAffine(src, dst_orig, M, Size(0, 0));
+
+    double radians = degrees * 3.14159265 / 180.0;     // cvt degrees to rad
+
+    // calculate new img size
+    Size_<double> imgsize(src.cols * cos(radians) + src.rows * sin(radians),
+                          src.rows * cos(radians) + src.cols * sin(radians));
+
+    // resize image
+    Mat M_translate = Mat_<double>({2,3}, {1, 0, (imgsize.width - src.cols) / 2.0, 0, 1, (imgsize.height - src.rows) / 2.0});
+    warpAffine(src, dst_resize, M_translate, imgsize);
+
+    // rotate image
+    Mat M_resize = getRotationMatrix2D(Point2f(dst_resize.cols / 2, dst_resize.rows / 2), degrees, 1);
+    warpAffine(dst_resize, dst_resize, M_resize, Size(0, 0));
+
+
+    cout << M << endl;
 
     imshow("src", src);
     imshow("dst_noresize", dst_orig);
+    imshow("dst_resize", dst_resize);
 
     waitKey();
     destroyAllWindows();
