@@ -9,13 +9,15 @@ void affine_transform();
 void affine_translate();
 void affine_shear();
 void affine_scale();    // resize
+void affine_rotation();
 
 int main(void)
 {
     // affine_transform();
     // affine_translate();
     // affine_shear();
-    affine_scale();
+    // affine_scale();
+    affine_rotation();
 
     return 0;
 }
@@ -133,6 +135,28 @@ void affine_scale()
     imshow("dst2", dst2(Rect(400, 500, 400, 400)));
     imshow("dst3", dst3(Rect(400, 500, 400, 400)));
     imshow("dst4", dst4(Rect(400, 500, 400, 400)));
+
+    waitKey();
+    destroyAllWindows();
+}
+
+void affine_rotation()
+{
+    Mat src = imread("img/tekapo.bmp", IMREAD_COLOR);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat M = getRotationMatrix2D(Point2f(src.cols / 2, src.rows / 2), 20, 1);
+
+    Mat dst_orig;
+    warpAffine(src, dst_orig, M, Size(0, 0));
+
+    imshow("src", src);
+    imshow("dst_noresize", dst_orig);
 
     waitKey();
     destroyAllWindows();
