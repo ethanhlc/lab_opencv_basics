@@ -157,11 +157,19 @@ void affine_rotation()
     Mat dst_orig, dst_resize;
     warpAffine(src, dst_orig, M, Size(0, 0));
 
-    double radians = degrees * 3.14159265 / 180.0;     // cvt degrees to rad
+    // double radians = degrees * 3.14159265 / 180.0;     // cvt degrees to rad
 
-    // calculate new img size
-    Size_<double> imgsize(src.cols * cos(radians) + src.rows * sin(radians),
-                          src.rows * cos(radians) + src.cols * sin(radians));
+    // // calculate new img size
+    // Size_<double> imgsize(src.cols * cos(radians) + src.rows * sin(radians),
+    //                       src.rows * cos(radians) + src.cols * sin(radians));
+
+    // alternate method to get image size
+    vector<Point2f> srcPts = {Point(0, 0), Point(src.cols - 1, src.rows - 1),
+                              Point(src.cols - 1, 0), Point(0, src.rows - 1)};
+    vector<Point2f> dstPts;
+    transform(srcPts, dstPts, M);
+
+    Size_<double> imgsize(dstPts[1].x - dstPts[0].x, dstPts[3].y - dstPts[2].y);
 
     // resize image
     Mat M_translate = Mat_<double>({2,3}, {1, 0, (imgsize.width - src.cols) / 2.0, 0, 1, (imgsize.height - src.rows) / 2.0});
