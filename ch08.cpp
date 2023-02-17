@@ -251,7 +251,7 @@ void on_Mouse(int event, int x, int y, int flags, void *userdata)
     int w = 200;
     int h = 300;
 
-    Mat src = *(Mat *)userdata;
+    static Mat src = (*(Mat *)userdata).clone();
 
     Point2f dstQuad[4] = {Point2f(0, 0),
                           Point2f(w - 1, 0),
@@ -272,9 +272,13 @@ void on_Mouse(int event, int x, int y, int flags, void *userdata)
                 Mat pers = getPerspectiveTransform(srcQuad, dstQuad);
 
                 Mat dst;
-                warpPerspective(src, dst, pers, Size(w, h));
+                warpPerspective(*(Mat *)userdata, dst, pers, Size(w, h));
 
                 imshow("dst", dst);
+
+                // reset
+                cnt = 0;
+                src = (*(Mat *)userdata).clone();
             }
         }
     }
