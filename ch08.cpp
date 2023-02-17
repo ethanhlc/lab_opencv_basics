@@ -13,6 +13,9 @@ void affine_rotation();
 void affine_flip();
 void perspective();
 void on_Mouse(int event, int x, int y, int flags, void *userdata);
+void SortQuad();
+bool sortFunction(Point2f i, Point2f j);
+double getDistance(Point2f pt_x, Point2f pt_y);
 
 Point2f srcQuad[4];     // src points for perpective warp
 
@@ -269,6 +272,7 @@ void on_Mouse(int event, int x, int y, int flags, void *userdata)
 
             if (cnt == 4)
             {
+                SortQuad();
                 Mat pers = getPerspectiveTransform(srcQuad, dstQuad);
 
                 Mat dst;
@@ -282,4 +286,60 @@ void on_Mouse(int event, int x, int y, int flags, void *userdata)
             }
         }
     }
+}
+
+void SortQuad()
+{
+    vector<Point2f> quad_vector(srcQuad, srcQuad + 4);
+    sort(quad_vector.begin(), quad_vector.end(), sortFunction);
+
+    // get cross product between 0->1 & 0->2
+    Point2f vecA(quad_vector[1].x - quad_vector[0].x, quad_vector[1].y - quad_vector[0].y);
+    Point2f vecB(quad_vector[2].x - quad_vector[0].x, quad_vector[2].y - quad_vector[0].y);
+    double cross = vecA.cross(vecB);
+
+    // if cross product < 0, wrong orientation (CCW) then SWAP
+    if (cross < 0)
+    {
+        // 0 1 2 3 > 1 0 2 3
+        Point2f temp = quad_vector[0];
+        quad_vector[0] = quad_vector[1];
+        quad_vector[1] = temp;
+    }
+    else
+    {
+        // 0 1 2 3 > 0 1 3 2
+        Point2f temp = quad_vector[2];
+        quad_vector[2] = quad_vector[3];
+        quad_vector[3] = temp;
+    }
+
+    // measure 0->1 & 1->2
+    // if 0->1 > 1->2, rotate by 1
+    if (getDistance(quad_vector[1], quad_vector[0]) > getDistance(quad_vector[2], quad_vector[1]))
+    {
+        Point2f temp = quad_vector[0];
+        quad_vector[0] = quad_vector[1];
+        quad_vector[1] = quad_vector[2];
+        quad_vector[2] = quad_vector[3];
+        quad_vector[3] = temp;
+    }
+
+    // Finally insert back into srcQuad
+    for (int i = 0; i < 4; i++)
+    {
+        srcQuad[i] = quad_vector[i];
+    }
+}
+
+bool sortFunction(Point2f i, Point2f j)
+{
+    return i.x < j.x;
+}
+
+double getDistance(Point2f pt_x, Point2f pt_y)
+{
+    double distance = (pt_x.x - pt_y.x) * (pt_x.x - pt_y.x)
+        + (pt_x.y - pt_y.y) * (pt_x.y - pt_y.y);
+    return distance;
 }
