@@ -8,12 +8,14 @@ using namespace cv;
 void sobel_edge();
 void canny_edge();
 void hough_lines();
+void hough_line_segments();
 
 int main(void)
 {
     // sobel_edge();
     // canny_edge();
-    hough_lines();
+    // hough_lines();
+    hough_line_segments();
 
     waitKey();
     destroyAllWindows();
@@ -96,6 +98,33 @@ void hough_lines()
         Point pt1(cvRound(x0 + alpha * (-sin_t)), cvRound(y0 + alpha * cos_t));
         Point pt2(cvRound(x0 - alpha * (-sin_t)), cvRound(y0 - alpha * cos_t));
         line(dst, pt1, pt2, Scalar(0, 0, 255), 1, LINE_AA);
+    }
+
+    imshow("src", src);
+    imshow("dst", dst);
+}
+
+void hough_line_segments()
+{
+    Mat src = imread("img/building.jpg", IMREAD_GRAYSCALE);
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat edge;
+    Canny(src, edge, 50, 150);
+
+    vector<Vec4i> lines;
+    HoughLinesP(edge, lines, 1, CV_PI / 180, 160, 50, 5);
+
+    Mat dst;
+    cvtColor(edge, dst, COLOR_GRAY2BGR);
+
+    for (Vec4i l : lines)
+    {
+        line(dst, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255), 2, LINE_AA);
     }
 
     imshow("src", src);
