@@ -10,6 +10,11 @@ void canny_edge();
 void hough_lines();
 void hough_line_segments();
 void hough_circles();
+void coin_calc();
+void readData();
+
+int won500max, won100max, won50max, won10max;
+int won500min, won100min, won50min, won10min;
 
 int main(void)
 {
@@ -17,7 +22,10 @@ int main(void)
     // canny_edge();
     // hough_lines();
     // hough_line_segments();
-    hough_circles();
+    // hough_circles();
+
+    readData();
+    coin_calc();
 
     waitKey();
     destroyAllWindows();
@@ -161,4 +169,109 @@ void hough_circles()
 
     imshow("src", src);
     imshow("dst", dst);
+}
+
+void coin_calc()
+{
+    VideoCapture cap(0);
+
+    if (cap.isOpened() == false)
+    {
+        cout << "Error opening camera!" << endl;
+        return;
+    }
+
+    Mat frame, img;
+    while (true)
+    {
+        cap >> frame;
+        cvtColor(frame, img, COLOR_BGR2GRAY);     // convert feed to grayscale
+
+        img = img(Rect(Point(180, 80), Point(400, 250)));   // crop feed
+        resize(img, img, Size(), 2, 2);
+
+
+        vector<Vec3f> circles;
+        HoughCircles(img, circles, HOUGH_GRADIENT, 1, 25, 200, 20, 20, 40);
+
+        Mat dst;
+        cvtColor(img, dst, COLOR_GRAY2BGR);
+
+        // Canny(img, dst, 100, 150);
+        int coin_sum = 0;
+        String value;
+
+        for (Vec3f c : circles)
+        {
+            Point center(cvRound(c[0]), cvRound(c[1]));
+            int radius = cvRound(c[2]);
+            circle(dst, center, radius, Scalar(0, 0, 255), 1, LINE_AA);
+
+            if (radius >= won500min && radius <= won500max)
+            {
+                value = "500";
+                coin_sum += 500;
+            }
+            if (radius >= won100min && radius <= won100max)
+            {
+                value = "100";
+                coin_sum += 100;
+            }
+            if (radius >= won50min && radius <= won50max)
+            {
+                value = "50";
+                coin_sum += 50;
+            }
+            if (radius >= won10min && radius <= won10max)
+            {
+                value = "10";
+                coin_sum += 10;
+            }
+
+            // String txt = format("radius: %d", radius);
+            // putText(dst, txt, center, FONT_HERSHEY_PLAIN, 1, Scalar(255, 0, 255));
+            putText(dst, value, center, FONT_HERSHEY_PLAIN, 1, Scalar(255, 0, 0), 2);
+        }
+
+        String coin_txt = format("%d", coin_sum);
+
+        putText(dst, coin_txt, Point(10, 20), FONT_HERSHEY_PLAIN, 1, Scalar(0, 255, 255), 2);
+
+        imshow("image", img);
+        imshow("dst", dst);
+
+        if (waitKey(200) == 'q')
+            break;
+    }
+}
+
+void readData()
+{
+    FileStorage fs("coins.json", FileStorage::READ);
+
+    if (!fs.isOpened())
+    {
+        cerr << "File open failed!" << endl;
+        exit;
+    }
+
+    fs["won500max"] >> won500max;
+    fs["won500min"] >> won500min;
+    fs["won100max"] >> won100max;
+    fs["won100min"] >> won100min;
+    fs["won50max"] >> won50max;
+    fs["won50min"] >> won50min;
+    fs["won10max"] >> won10max;
+    fs["won10min"] >> won10min;
+
+    cout << "500: " << won500max << endl;
+    cout << "500: " << won500min << endl;
+    cout << "100: " << won100max << endl;
+    cout << "100: " << won100min << endl;
+    cout << "50: " << won50max << endl;
+    cout << "50: " << won50min << endl;
+    cout << "10: " << won10max << endl;
+    cout << "10: " << won10min << endl;
+
+    fs.release();
 }
