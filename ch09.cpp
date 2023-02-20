@@ -6,5 +6,17 @@ using namespace cv;
 
 int main(void)
 {
-    return;
+    Mat img = imread("img/lenna.bmp");
+
+    if (img.empty())
+    {
+        cout << "No img data!" << endl;
+        return -1;
+    }
+    imshow("img", img);
+
+    waitKey();
+    destroyAllWindows();
+
+    return 0;
 }
