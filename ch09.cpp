@@ -175,11 +175,16 @@ void coin_calc()
 {
     VideoCapture cap(0);
 
+    cap.set(CAP_PROP_FRAME_WIDTH, 1920);
+    cap.set(CAP_PROP_FRAME_HEIGHT, 1080);
+
     if (cap.isOpened() == false)
     {
         cout << "Error opening camera!" << endl;
         return;
     }
+
+    cout << cap.get(CAP_PROP_FRAME_WIDTH) << endl;
 
     Mat frame, img;
     while (true)
@@ -187,12 +192,14 @@ void coin_calc()
         cap >> frame;
         cvtColor(frame, img, COLOR_BGR2GRAY);     // convert feed to grayscale
 
-        img = img(Rect(Point(180, 80), Point(400, 250)));   // crop feed
-        resize(img, img, Size(), 2, 2);
+        // drawMarker(img, Point(600, 100), Scalar(255));
+        // drawMarker(img, Point(1200, 700), Scalar(255));
+        img = img(Rect(Point(600, 100), Point(1200, 700)));   // crop feed
+        // resize(img, img, Size(), 2, 2);
 
 
         vector<Vec3f> circles;
-        HoughCircles(img, circles, HOUGH_GRADIENT, 1, 25, 200, 20, 20, 40);
+        HoughCircles(img, circles, HOUGH_GRADIENT, 1, 25, 200, 20, 20, 45);
 
         Mat dst;
         cvtColor(img, dst, COLOR_GRAY2BGR);
@@ -252,7 +259,7 @@ void readData()
     if (!fs.isOpened())
     {
         cerr << "File open failed!" << endl;
-        exit;
+        exit(-1);
     }
 
     fs["won500max"] >> won500max;
