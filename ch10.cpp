@@ -6,10 +6,12 @@ using namespace cv;
 
 /// Function Declarations
 void color_inverse();
+void color_split();
 
 int main(void)
 {
-    color_inverse();
+    // color_inverse();
+    color_split();
 
     waitKey();
     destroyAllWindows();
@@ -58,4 +60,26 @@ void color_inverse()
 
     imshow("src", src);
     imshow("dst", dst);
+}
+
+void color_split()
+{
+    Mat src = imread("img/candies.png");
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    vector<Mat> bgr_planes;
+    split(src, bgr_planes);
+
+    imshow("src", src);
+    imshow("B_plane", bgr_planes[0]);
+    imshow("G_plane", bgr_planes[1]);
+    imshow("R_plane", bgr_planes[2]);
+
+    waitKey();
+    destroyAllWindows();
 }
