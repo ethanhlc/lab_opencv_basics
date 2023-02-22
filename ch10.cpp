@@ -9,11 +9,20 @@ void color_inverse();
 void color_split();
 void color_eq();
 
+// HSV color segmentation
+void color_segmentation();
+void on_hue_changed(int, void *);
+
+int lower_hue = 40, upper_hue = 80;
+Mat src, src_hsv, mask;
+
 int main(void)
 {
     // color_inverse();
     // color_split();
-    color_eq();
+    // color_eq();
+
+    color_segmentation();
 
     waitKey();
     destroyAllWindows();
@@ -125,4 +134,37 @@ void color_eq()
 
     imshow("src", src);
     imshow("dst", dst);
+}
+
+void color_segmentation()
+{
+    src = imread("img/candies.png", IMREAD_COLOR);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    src_hsv;
+    cvtColor(src, src_hsv, COLOR_BGR2HSV);
+
+    imshow("src", src);
+
+    namedWindow("mask");
+    createTrackbar("Lower Hue", "mask", &lower_hue, 179, on_hue_changed);
+    createTrackbar("Upper Hue", "mask", &upper_hue, 179, on_hue_changed);
+    on_hue_changed(0, 0);
+
+    waitKey();
+    return;
+}
+
+void on_hue_changed(int, void *)
+{
+    Scalar lowerb(lower_hue, 100, 0);
+    Scalar upperb(upper_hue, 255, 255);
+    inRange(src_hsv, lowerb, upperb, mask);
+
+    imshow("mask", mask);
 }
