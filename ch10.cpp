@@ -28,20 +28,33 @@ void color_inverse()
         return;
     }
 
-    Mat dst(src.rows, src.cols, src.type());
+    // Mat dst(src.rows, src.cols, src.type());
 
-    for (int j = 0; j < src.rows; j++)
-    {
-        for (int i = 0; i < src.cols; i++)
-        {
-            Vec3b &p1 = src.at<Vec3b>(j, i);
-            Vec3b &p2 = dst.at<Vec3b>(j, i);
+    // for (int j = 0; j < src.rows; j++)
+    // {
+    //     for (int i = 0; i < src.cols; i++)
+    //     {
+    //         Vec3b &p1 = src.at<Vec3b>(j, i);
+    //         Vec3b &p2 = dst.at<Vec3b>(j, i);
 
-            p2[0] = 255 - p1[0];    // B
-            p2[1] = 255 - p1[1];    // G
-            p2[2] = 255 - p1[2];    // R
-        }
-    }
+    //         p2[0] = 255 - p1[0];    // B
+    //         p2[1] = 255 - p1[1];    // G
+    //         p2[2] = 255 - p1[2];    // R
+    //     }
+    // }
+
+    // simpler form
+    // for (int j = 0; j < src.rows; j++)
+    // {
+    //     for (int i = 0; i < src.cols; i++)
+    //     {
+    //         dst.at<Vec3b>(j, i) = Vec3b(255, 255, 255) - src.at<Vec3b>(j, i);
+    //     }
+    // }
+
+    // simplest form
+    Mat dst = ~src;
+
 
     imshow("src", src);
     imshow("dst", dst);
