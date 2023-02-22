@@ -80,6 +80,18 @@ void color_split()
     imshow("G_plane", bgr_planes[1]);
     imshow("R_plane", bgr_planes[2]);
 
+    Mat yellow = 0.7 * bgr_planes[1] + 0.3 * bgr_planes[2];
+    imshow("yellow", yellow);
+
+    Mat yellow_bi;
+    threshold(yellow, yellow_bi, 190, 255, THRESH_BINARY);
+    imshow("yellow_bi", yellow_bi);
+
+    // Mat yellowMM(src.rows, src.cols, src.type());
+    Mat yellowMM;
+    src.copyTo(yellowMM, yellow_bi);
+    imshow("yMM", yellowMM);
+
     waitKey();
     destroyAllWindows();
 }
