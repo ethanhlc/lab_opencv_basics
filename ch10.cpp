@@ -7,11 +7,13 @@ using namespace cv;
 /// Function Declarations
 void color_inverse();
 void color_split();
+void color_eq();
 
 int main(void)
 {
     // color_inverse();
-    color_split();
+    // color_split();
+    color_eq();
 
     waitKey();
     destroyAllWindows();
@@ -94,4 +96,33 @@ void color_split()
 
     waitKey();
     destroyAllWindows();
+}
+
+void color_eq()
+{
+    Mat src = imread("img/pepper.bmp", IMREAD_COLOR);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat src_ycrcb;
+    cvtColor(src, src_ycrcb, COLOR_BGR2YCrCb);
+
+    vector<Mat> ycrcb_planes;
+    split(src_ycrcb, ycrcb_planes);
+
+    equalizeHist(ycrcb_planes[0], ycrcb_planes[0]); // Y channel
+    // normalize(ycrcb_planes[0], ycrcb_planes[0], 0, 255, NORM_MINMAX);
+
+    Mat dst_ycrcb;
+    merge(ycrcb_planes, dst_ycrcb);
+
+    Mat dst;
+    cvtColor(dst_ycrcb, dst, COLOR_YCrCb2BGR);
+
+    imshow("src", src);
+    imshow("dst", dst);
 }
