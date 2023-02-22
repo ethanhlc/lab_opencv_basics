@@ -13,6 +13,9 @@
 *.avi
 *.mp4
 
+## cmake extension
+build/
+
 ### CMake ###
 CMakeLists.txt.user
 CMakeCache.txt
