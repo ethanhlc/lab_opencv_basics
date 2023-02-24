@@ -14,10 +14,20 @@ void color_segmentation();
 void on_hue_changed(int, void *);
 
 void hist_backproj();
+void hist_backproj_nomask();
+void mouseCallback(int event, int x, int y, int flags, void *userdata);
+void get_backproj_img();
+#define HIST_BACKPROJ
 
 #ifdef COLOR_SEG
 int lower_hue = 40, upper_hue = 80;
 Mat src, src_hsv, mask;
+#endif
+
+#ifdef HIST_BACKPROJ
+Mat ref_img, ref_ycrcb, mask;
+Mat hist, dst_backproj;
+Mat src, src_ycrcb;
 #endif
 
 int main(void)
@@ -26,8 +36,9 @@ int main(void)
     // color_split();
     // color_eq();
     // color_segmentation();
+    // hist_backproj();
 
-    hist_backproj();
+    hist_backproj_nomask();
 
     waitKey();
     destroyAllWindows();
@@ -215,3 +226,82 @@ void hist_backproj()
     imshow("src", src);
     imshow("backproj", backproj);
 }
+
+#ifdef HIST_BACKPROJ
+void hist_backproj_nomask()
+{
+    // load ref image
+    ref_img = imread("img/ref.png", IMREAD_COLOR);
+    if (ref_img.empty())
+    {
+        cerr << "Reference image load failed!" << endl;
+        return;
+    }
+    cvtColor(ref_img, ref_ycrcb, COLOR_BGR2YCrCb);
+
+    // set correct type for Mat mask & init
+    // mask.create(ref_img.rows, ref_img.cols, CV_8UC1);
+    // mask.setTo(0);
+    mask = Mat::zeros(ref_img.size(), CV_8UC1);
+
+    namedWindow("ref_image");
+    setMouseCallback("ref_image", mouseCallback);
+    imshow("ref_image", ref_img);
+
+}
+
+void mouseCallback(int event, int x, int y, int flags, void *userdata)
+{
+    static Mat ref_clone = ref_img.clone();
+    static vector<Point2i> poly;  // store mouse clicks
+
+    // left click
+    if (event == EVENT_LBUTTONDOWN)
+    {
+        circle(ref_clone, Point(x, y), 5, Scalar(0, 0, 255), -1);  // draw circle @ click
+        if (poly.size() > 0)    // draw connecting line
+        {
+            line(ref_clone, poly.back(), Point(x, y), Scalar(0, 0, 255));
+        }
+        poly.push_back(Point(x, y));    // store click
+    }
+    // right click - connect lines & create mask polygon
+    if (event == EVENT_RBUTTONDOWN)
+    {
+        line(ref_clone, poly.front(), poly.back(), Scalar(0, 0, 255));
+        fillPoly(mask, poly, Scalar(255));
+        poly.clear();
+        imshow("mask", mask);
+        get_backproj_img();
+    }
+    // middle click - reset mask & polygon
+    if (event == EVENT_MBUTTONDOWN)
+    {
+        poly.clear();
+        ref_clone = ref_img.clone();
+        mask.setTo(0);
+    }
+
+    imshow("ref_image", ref_clone);
+}
+
+void get_backproj_img()
+{
+    int channels[] = {1,2};
+    int cr_bins = 128, cb_bins = 128;
+    int histSize[] = {cr_bins, cb_bins};
+    float cr_range[] = {0, 256};
+    float cb_range[] = {0, 256};
+    const float *ranges[] = {cr_range, cb_range};
+
+    calcHist(&ref_ycrcb, 1, channels, mask, hist, 2, histSize, ranges);
+
+    src = imread("img/kids.png", IMREAD_COLOR);
+    cvtColor(src, src_ycrcb, COLOR_BGR2YCrCb);
+
+    calcBackProject(&src_ycrcb, 1, channels, hist, dst_backproj, ranges, 1, true);
+
+    imshow("backproj", dst_backproj);
+    imshow("histogram", hist);
+}
+#endif
