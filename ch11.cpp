@@ -7,10 +7,12 @@ using namespace cv;
 /// Function Declarations
 void threshold_trackbar();
 void on_threshold(int pos, void *userdata);
+void threshold_otsu();
 
 int main(void)
 {
-    threshold_trackbar();
+    // threshold_trackbar();
+    threshold_otsu();
 
     destroyAllWindows();
 
@@ -45,4 +47,24 @@ void on_threshold(int pos, void *userdata)
     threshold(src, dst, pos, 255, THRESH_BINARY);
 
     imshow("dst", dst);
+}
+
+void threshold_otsu()
+{
+    Mat src = imread("img/camera.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat dst;
+    cout << "otsu threshold: ";
+    cout << threshold(src, dst, 0, 255, THRESH_BINARY | THRESH_OTSU) << endl;
+
+    imshow("src", src);
+    imshow("dst", dst);
+
+    waitKey();
 }
