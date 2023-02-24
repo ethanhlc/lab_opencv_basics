@@ -13,16 +13,21 @@ void color_eq();
 void color_segmentation();
 void on_hue_changed(int, void *);
 
+void hist_backproj();
+
+#ifdef COLOR_SEG
 int lower_hue = 40, upper_hue = 80;
 Mat src, src_hsv, mask;
+#endif
 
 int main(void)
 {
     // color_inverse();
     // color_split();
     // color_eq();
+    // color_segmentation();
 
-    color_segmentation();
+    hist_backproj();
 
     waitKey();
     destroyAllWindows();
@@ -136,6 +141,7 @@ void color_eq()
     imshow("dst", dst);
 }
 
+#ifdef COLOR_SEG // COLOR_SEG requires global vars
 void color_segmentation()
 {
     src = imread("img/candies.png", IMREAD_COLOR);
@@ -167,4 +173,45 @@ void on_hue_changed(int, void *)
     inRange(src_hsv, lowerb, upperb, mask);
 
     imshow("mask", mask);
+}
+#endif // END_COLOR_SEG
+
+void hist_backproj()
+{
+    // Calculate CrCb histogram from reference image
+    Mat ref, ref_ycrcb, mask;
+    ref = imread("img/ref.png", IMREAD_COLOR);
+    mask = imread("img/mask.bmp", IMREAD_GRAYSCALE);
+    if (ref.empty() || mask.empty())
+    {
+        cerr << "Ref image load failed!" << endl;
+        return;
+    }
+    cvtColor(ref, ref_ycrcb, COLOR_BGR2YCrCb);
+
+    Mat hist;
+    int channels[] = {1, 2};
+    int cr_bins = 128, cb_bins = 128;
+    int histSize[] = {cr_bins, cb_bins};
+    float cr_range[] = {0, 256};
+    float cb_range[] = {0, 256};
+    const float *ranges[] = {cr_range, cb_range};
+
+    calcHist(&ref_ycrcb, 1, channels, mask, hist, 2, histSize, ranges);
+
+    // Apply histogram backprojection to input image
+    Mat src, src_ycrcb;
+    src = imread("img/kids.png", IMREAD_COLOR);
+    if (src.empty())
+    {
+        cerr << "Src image load failed!" << endl;
+        return;
+    }
+    cvtColor(src, src_ycrcb, COLOR_BGR2YCrCb);
+
+    Mat backproj;
+    calcBackProject(&src_ycrcb, 1, channels, hist, backproj, ranges, 1, true);
+
+    imshow("src", src);
+    imshow("backproj", backproj);
 }
