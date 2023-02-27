@@ -10,12 +10,14 @@ void on_threshold(int pos, void *userdata);
 void threshold_otsu();
 void threshold_adaptive();
 void on_trackbar_adapt(int pos, void *userdata);
+void erode_dilate();
 
 int main(void)
 {
     // threshold_trackbar();
     // threshold_otsu();
-    threshold_adaptive();
+    // threshold_adaptive();
+    erode_dilate();
 
     destroyAllWindows();
 
@@ -104,4 +106,29 @@ void on_trackbar_adapt(int pos, void *userdata)
     adaptiveThreshold(src, dst, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, pos, 5);
 
     imshow("sudoku", dst);
+}
+
+void erode_dilate()
+{
+    Mat src = imread("img/milkdrop.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat bin;
+    threshold(src, bin, 0, 255, THRESH_BINARY | THRESH_OTSU);
+
+    Mat dst_erode, dst_dilate;
+    erode(bin, dst_erode, Mat());
+    dilate(bin, dst_dilate, Mat());
+
+    imshow("src", src);
+    imshow("bin", bin);
+    imshow("erode", dst_erode);
+    imshow("dilate", dst_dilate);
+
+    waitKey();
 }
