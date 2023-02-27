@@ -11,13 +11,15 @@ void threshold_otsu();
 void threshold_adaptive();
 void on_trackbar_adapt(int pos, void *userdata);
 void erode_dilate();
+void open_close();
 
 int main(void)
 {
     // threshold_trackbar();
     // threshold_otsu();
     // threshold_adaptive();
-    erode_dilate();
+    // erode_dilate();
+    open_close();
 
     destroyAllWindows();
 
@@ -143,6 +145,38 @@ void erode_dilate()
         if (waitKey() == 'q')
             break;
     }
+
+    waitKey();
+}
+
+void open_close()
+{
+    Mat src = imread("img/milkdrop.bmp", IMREAD_GRAYSCALE);
+
+    if (src.empty())
+    {
+        cerr << "Image load failed!" << endl;
+        return;
+    }
+
+    Mat bin;
+    threshold(src, bin, 0, 255, THRESH_BINARY | THRESH_OTSU);
+
+    Mat dst_open, dst_close;
+    morphologyEx(bin, dst_open, MORPH_OPEN, Mat());
+    morphologyEx(bin, dst_close, MORPH_CLOSE, Mat());
+
+    Mat dst_erode, dst_dilate, dst_grad;
+    morphologyEx(bin, dst_erode, MORPH_ERODE, Mat());
+    morphologyEx(bin, dst_dilate, MORPH_DILATE, Mat());
+    morphologyEx(bin, dst_grad, MORPH_GRADIENT, Mat());
+
+    imshow("bin", bin);
+    imshow("oepn", dst_open);
+    imshow("close", dst_close);
+    imshow("erode", dst_erode);
+    imshow("dilate", dst_dilate);
+    imshow("gradient", dst_grad);
 
     waitKey();
 }
