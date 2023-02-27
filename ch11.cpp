@@ -121,14 +121,28 @@ void erode_dilate()
     Mat bin;
     threshold(src, bin, 0, 255, THRESH_BINARY | THRESH_OTSU);
 
+    Mat kernel = getStructuringElement(MORPH_CROSS, Size(3, 3));
+
     Mat dst_erode, dst_dilate;
-    erode(bin, dst_erode, Mat());
-    dilate(bin, dst_dilate, Mat());
+    Mat dst_erode2, dst_dilate2;
+    erode(bin, dst_erode, kernel);
+    dilate(bin, dst_dilate, kernel);
+    erode(bin, dst_erode2, kernel, Point(-1, -1), 2);
+    dilate(bin, dst_dilate2, kernel, Point(-1, -1), 2);
 
     imshow("src", src);
     imshow("bin", bin);
-    imshow("erode", dst_erode);
-    imshow("dilate", dst_dilate);
+    while (1)
+    {
+        imshow("erode", dst_erode);
+        imshow("dilate", dst_dilate);
+        if (waitKey() == 'q')
+            break;
+        imshow("erode", dst_erode2);
+        imshow("dilate", dst_dilate2);
+        if (waitKey() == 'q')
+            break;
+    }
 
     waitKey();
 }
